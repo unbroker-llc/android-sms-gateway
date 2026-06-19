@@ -18,6 +18,12 @@
         app:summary="@string/delays_limits_etc" />
 
     <Preference
+        android:icon="@drawable/ic_log_lifetime"
+        app:fragment="me.capcom.smsgateway.ui.settings.IncomingSettingsFragment"
+        app:summary="@string/delete_after_days"
+        app:title="@string/incoming_dotdotdot" />
+
+    <Preference
         android:icon="@drawable/ic_webhook"
         app:fragment="me.capcom.smsgateway.ui.settings.WebhooksSettingsFragment"
         app:summary="@string/retries_signing_etc"

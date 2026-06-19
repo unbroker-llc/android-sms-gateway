@@ -12,8 +12,7 @@
     <string name="btn_continue">Continue</string>
     <string name="by_code">By Code</string>
     <string name="can_affect_battery_life">can affect battery life</string>
-    <string
-        name="click_continue_to_create_an_account_no_personal_information_is_required_nby_continuing_you_agree_to_our_privacy_policy_at_https_docs_sms_gate_app_privacy_policy">Click
+    <string name="click_continue_to_create_an_account_no_personal_information_is_required_nby_continuing_you_agree_to_our_privacy_policy_at_https_docs_sms_gate_app_privacy_policy">Click
         Continue to create an account. No personal information is required.\nBy continuing, you
         agree to our Privacy Policy at https://docs.sms-gate.app/privacy/policy/</string>
     <string name="cloud_server_dotdotdot">Cloud server…</string>
@@ -176,4 +175,5 @@
     <string name="language">Language</string>
     <string name="language_system">System default</string>
     <string name="password_must_not_be_empty">Password must not be empty</string>
+    <string name="incoming_dotdotdot">Incoming…</string>
 </resources>
