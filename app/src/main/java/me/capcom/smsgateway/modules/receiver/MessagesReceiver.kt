@@ -77,7 +77,13 @@ class MessagesReceiver : BroadcastReceiver(), KoinComponent {
             val textFilter = IntentFilter().apply {
                 addAction(Intents.SMS_RECEIVED_ACTION)
             }
-            context.registerReceiver(
+            // Register on the APPLICATION context, not the passed-in `context`.
+            // OrchestratorService.start() can be called from BootReceiver, whose
+            // BroadcastReceiver context makes registerReceiver throw
+            // ReceiverCallNotAllowedException (swallowed upstream), leaving
+            // SMS_RECEIVED unregistered -> inbound SMS silently dropped. The data
+            // filter below already uses appContext; match it.
+            appContext.registerReceiver(
                 INSTANCE,
                 textFilter
             )
