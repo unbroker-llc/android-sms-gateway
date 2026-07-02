@@ -1,0 +1,76 @@
+name: Sync upstream MMS branch
+
+# Twice a week, rebase our CI commits (the nightly build) onto the latest
+# capcom6/android-sms-gateway mms/extended-support, push, and rebuild the nightly APK.
+# Scheduled workflows run only from the DEFAULT branch, so this file lives on master
+# even though it operates on mms/extended-support. Opens an issue on rebase conflict.
+
+on:
+  schedule:
+    - cron: "25 6 * * 1,4" # Mon + Thu 06:25 UTC (off-peak)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mms/extended-support (full history)
+        uses: actions/checkout@v4
+        with:
+          ref: mms/extended-support
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "unbroker-sync-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch upstream
+        run: |
+          git remote add upstream https://github.com/capcom6/android-sms-gateway.git
+          git fetch --no-tags upstream mms/extended-support
+
+      - name: Rebase our commits onto upstream
+        id: rebase
+        run: |
+          set -e
+          UPSTREAM=$(git rev-parse upstream/mms/extended-support)
+          if git merge-base --is-ancestor "$UPSTREAM" HEAD; then
+            echo "Already up to date with upstream ($UPSTREAM)."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BEFORE=$(git rev-parse HEAD)
+          if git rebase "$UPSTREAM"; then
+            AFTER=$(git rev-parse HEAD)
+            [ "$BEFORE" != "$AFTER" ] && echo "changed=true" >> "$GITHUB_OUTPUT" || echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git rebase --abort || true
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+      - name: Push rebased branch
+        if: steps.rebase.outputs.changed == 'true'
+        run: git push --force-with-lease origin mms/extended-support
+
+      - name: Trigger nightly build
+        if: steps.rebase.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run nightly.yml --ref mms/extended-support
+
+      - name: Open issue on conflict
+        if: failure() && steps.rebase.outputs.conflict == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Upstream sync conflict" \
+            --body "The scheduled upstream sync could not rebase our CI commits onto upstream/mms/extended-support (merge conflict). Resolve manually on mms/extended-support: git fetch upstream && git rebase upstream/mms/extended-support, fix, git push --force-with-lease." \
+            || true
