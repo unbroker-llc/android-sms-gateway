@@ -11,6 +11,7 @@ import me.capcom.smsgateway.modules.incoming.IncomingMessagesService
 import me.capcom.smsgateway.modules.incoming.db.IncomingMessageType
 import me.capcom.smsgateway.modules.logs.LogsService
 import me.capcom.smsgateway.modules.logs.db.LogEntry
+import me.capcom.smsgateway.modules.mms.MmsAttachmentStorage
 import me.capcom.smsgateway.modules.receiver.data.InboxMessage
 import me.capcom.smsgateway.modules.webhooks.WebHooksService
 import me.capcom.smsgateway.modules.webhooks.domain.WebHookEvent
@@ -30,6 +31,7 @@ class ReceiverService : KoinComponent {
 
     private val eventsReceiver by lazy { EventsReceiver() }
     private val mmsContentObserver by lazy { MmsContentObserver() }
+    private val smsContentObserver by lazy { SmsContentObserver() }
 
     fun start(context: Context) {
         MessagesReceiver.register(context)
