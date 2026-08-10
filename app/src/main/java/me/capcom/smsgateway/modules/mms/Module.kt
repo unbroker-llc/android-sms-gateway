@@ -7,3 +7,5 @@ val mmsModule = module {
     singleOf(::MmsAttachmentStorage)
     singleOf(::MmsAttachmentStorage)
 }
+
+const val MODULE_NAME = "mms"
