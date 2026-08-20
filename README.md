@@ -396,3 +396,4 @@ Use this space to list resources you find helpful and would like to give credit 
 [issues-url]: https://github.com/capcom6/android-sms-gateway/issues
 [license-shield]: https://img.shields.io/github/license/capcom6/android-sms-gateway.svg?style=for-the-badge
 [license-url]: https://github.com/capcom6/android-sms-gateway/blob/master/LICENSE
+
